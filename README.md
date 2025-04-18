@@ -42,4 +42,3 @@ linkedin-optimizer-pro/
 ├── 📁 templates/
 │   └── 🖼️ index.html        # Main interface
 ├── 📝 README.md             # Documentation
-└── 📋 requirements.txt      # Dependencies
