@@ -10,6 +10,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const instructionsContent = document.getElementById('instructions-content');
     const instructionsIcon = document.getElementById('instructions-icon');
     
+    // Tab elements
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // AI Analysis elements
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const profileUrlInput = document.getElementById('profile-url');
+    const analysisResults = document.getElementById('analysis-results');
+    const strengthsList = document.getElementById('strengths-list');
+    const weaknessesList = document.getElementById('weaknesses-list');
+    const suggestionsList = document.getElementById('suggestions-list');
+    const profileScore = document.getElementById('profile-score');
+    const scoreBar = document.getElementById('score-bar');
+    const scoreComparison = document.getElementById('score-comparison');
+    const exportAnalysisBtn = document.getElementById('export-analysis-btn');
+    
+    // Profile Score elements
+    const downloadExcelBtn = document.getElementById('download-excel-btn');
+    const viewChatBtn = document.getElementById('view-chat-btn');
+    
+    // PDF Export elements
+    const generatePdfBtn = document.getElementById('generate-pdf-btn');
+    
     let soundEnabled = true;
     let speechRecognition;
     let botVoice = null;
@@ -62,6 +85,149 @@ document.addEventListener('DOMContentLoaded', function() {
             voiceBtn.style.display = 'none';
         }
     }
+    
+    // Tab switching functionality
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Update active tab button
+            tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-700', 'bg-indigo-50'));
+            this.classList.add('active', 'text-indigo-700', 'bg-indigo-50');
+            
+            // Update active tab content
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // Initialize chart if on score tab
+            if (tabId === 'score') {
+                initProfileChart();
+            }
+        });
+    });
+    
+    // Initialize profile score chart
+    function initProfileChart() {
+        const ctx = document.getElementById('profileChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Headline', 'Summary', 'Experience', 'Education', 'Skills', 'Recommendations'],
+                datasets: [{
+                    label: 'Your Profile',
+                    data: [85, 65, 90, 75, 70, 40],
+                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                    pointRadius: 4
+                }, {
+                    label: 'Industry Average',
+                    data: [70, 60, 80, 85, 65, 50],
+                    backgroundColor: 'rgba(192, 132, 252, 0.2)',
+                    borderColor: 'rgba(192, 132, 252, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(192, 132, 252, 1)',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    }
+    
+    // Handle AI analysis
+    analyzeBtn.addEventListener('click', function() {
+        const profileUrl = profileUrlInput.value.trim();
+        
+        if (!profileUrl) {
+            alert('Please enter your LinkedIn profile URL');
+            return;
+        }
+        
+        // Show loading state
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...';
+        analyzeBtn.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+            // Mock analysis data
+            const analysis = {
+                strengths: ["Strong keyword optimization", "Complete experience section", "Good education background"],
+                weaknesses: ["Summary could be more compelling", "Need more recommendations", "Skills section needs updating"],
+                suggestions: [
+                    "Add 3-5 more technical skills",
+                    "Include metrics in your experience descriptions",
+                    "Write a more engaging summary with your unique value proposition"
+                ],
+                score: 78,
+                comparison: "Your profile scores higher than 65% of profiles in your industry"
+            };
+            
+            // Update UI with analysis results
+            strengthsList.innerHTML = analysis.strengths.map(strength => `<li>${strength}</li>`).join('');
+            weaknessesList.innerHTML = analysis.weaknesses.map(weakness => `<li>${weakness}</li>`).join('');
+            suggestionsList.innerHTML = analysis.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('');
+            profileScore.textContent = analysis.score;
+            scoreBar.style.width = `${analysis.score}%`;
+            scoreComparison.textContent = analysis.comparison;
+            
+            // Show results
+            analysisResults.classList.remove('hidden');
+            
+            // Reset button
+            analyzeBtn.innerHTML = '<span>Analyze</span><i class="fas fa-magic ml-2"></i>';
+            analyzeBtn.disabled = false;
+        }, 2000);
+    });
+    
+    // Handle Excel download
+    downloadExcelBtn.addEventListener('click', function() {
+        window.location.href = '/profile-score-visualization';
+    });
+    
+    // Handle PDF generation
+    generatePdfBtn.addEventListener('click', function() {
+        generatePdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
+        generatePdfBtn.disabled = true;
+        
+        window.location.href = '/export-profile-pdf';
+        
+        setTimeout(() => {
+            generatePdfBtn.innerHTML = '<span>Generate PDF Report</span><i class="fas fa-download ml-2"></i>';
+            generatePdfBtn.disabled = false;
+        }, 2000);
+    });
+    
+    // Handle export analysis
+    exportAnalysisBtn.addEventListener('click', function() {
+        window.location.href = '/export-profile-pdf';
+    });
+    
+    // View chat button
+    viewChatBtn.addEventListener('click', function() {
+        tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-700', 'bg-indigo-50'));
+        document.querySelector('[data-tab="chat"]').classList.add('active', 'text-indigo-700', 'bg-indigo-50');
+        
+        tabContents.forEach(content => content.classList.remove('active'));
+        document.getElementById('chat').classList.add('active');
+        
+        userInput.focus();
+    });
     
     // Toggle instructions panel
     instructionsToggle.addEventListener('click', function() {
