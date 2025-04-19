@@ -212,6 +212,138 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Real-Time Optimization Tools -->
+                <div class="mt-6 bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4">
+                        <h3 class="font-semibold flex items-center">
+                            <i class="fas fa-edit mr-2"></i> Real-Time Optimization Tools
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Real-time Summary Suggestions -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Summary Optimizer</h4>
+                            <textarea 
+                                id="summary-input" 
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                placeholder="Type or paste your LinkedIn summary here for real-time suggestions..."
+                                rows="5"
+                            ></textarea>
+                            <div id="summary-suggestions" class="mt-2 text-sm text-gray-600 hidden">
+                                <div class="flex items-start">
+                                    <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <p class="font-medium">AI Suggestions:</p>
+                                        <div id="summary-feedback" class="mt-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Headline Analyzer -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Headline Analyzer</h4>
+                            <div class="flex space-x-2">
+                                <input 
+                                    type="text" 
+                                    id="headline-input" 
+                                    class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                    placeholder="Enter your current LinkedIn headline"
+                                >
+                                <button 
+                                    id="analyze-headline-btn"
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition duration-200 flex items-center shadow-md"
+                                >
+                                    <span>Analyze</span>
+                                    <i class="fas fa-search ml-2"></i>
+                                </button>
+                            </div>
+                            <div id="headline-results" class="mt-3 hidden">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium">Headline Score:</span>
+                                    <div class="flex items-center">
+                                        <span id="headline-score" class="text-xl font-bold mr-2">0</span>
+                                        <span class="text-sm text-gray-500">/100</span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                                    <div id="headline-score-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <div id="headline-tips" class="text-sm text-gray-700 space-y-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- Keyword Highlighter -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Keyword Finder</h4>
+                            <div class="flex space-x-2 mb-2">
+                                <input 
+                                    type="text" 
+                                    id="target-role-input" 
+                                    class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                    placeholder="Enter your target job title (e.g. 'Digital Marketing Manager')"
+                                >
+                                <button 
+                                    id="find-keywords-btn"
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition duration-200 flex items-center shadow-md"
+                                >
+                                    <span>Find</span>
+                                    <i class="fas fa-key ml-2"></i>
+                                </button>
+                            </div>
+                            <div id="keyword-results" class="hidden">
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mb-3">
+                                    <p class="text-sm font-medium text-blue-800">Recommended Keywords:</p>
+                                    <div id="recommended-keywords" class="mt-2 flex flex-wrap gap-2"></div>
+                                </div>
+                                <textarea 
+                                    id="profile-text-input" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                    placeholder="Paste your profile text here to highlight missing keywords..."
+                                    rows="5"
+                                ></textarea>
+                                <div id="highlighted-text" class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hidden"></div>
+                            </div>
+                        </div>
+
+                        <!-- Headline Generator -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Headline Generator</h4>
+                            <div class="flex space-x-2">
+                                <select 
+                                    id="job-title-select" 
+                                    class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                >
+                                    <option value="">Select your target job title</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Digital Marketing Manager">Digital Marketing Manager</option>
+                                    <option value="Data Scientist">Data Scientist</option>
+                                    <option value="Product Manager">Product Manager</option>
+                                    <option value="Financial Analyst">Financial Analyst</option>
+                                    <option value="UX Designer">UX Designer</option>
+                                </select>
+                                <button 
+                                    id="generate-headline-btn"
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition duration-200 flex items-center shadow-md"
+                                >
+                                    <span>Generate</span>
+                                    <i class="fas fa-magic ml-2"></i>
+                                </button>
+                            </div>
+                            <div id="generated-headlines" class="mt-3 hidden">
+                                <p class="text-sm font-medium mb-2">AI-Generated Headline Options:</p>
+                                <div class="space-y-2" id="headline-options"></div>
+                                <button 
+                                    id="regenerate-headlines-btn"
+                                    class="mt-3 text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition"
+                                >
+                                    <i class="fas fa-sync mr-1"></i> Regenerate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- AI Analysis Tab -->
