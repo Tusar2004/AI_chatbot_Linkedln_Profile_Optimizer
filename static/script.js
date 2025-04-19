@@ -33,6 +33,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // PDF Export elements
     const generatePdfBtn = document.getElementById('generate-pdf-btn');
     
+    // New elements for optimization tools
+    const summaryInput = document.getElementById('summary-input');
+    const summarySuggestions = document.getElementById('summary-suggestions');
+    const summaryFeedback = document.getElementById('summary-feedback');
+    const headlineInput = document.getElementById('headline-input');
+    const analyzeHeadlineBtn = document.getElementById('analyze-headline-btn');
+    const headlineResults = document.getElementById('headline-results');
+    const headlineScore = document.getElementById('headline-score');
+    const headlineScoreBar = document.getElementById('headline-score-bar');
+    const headlineTips = document.getElementById('headline-tips');
+    const targetRoleInput = document.getElementById('target-role-input');
+    const findKeywordsBtn = document.getElementById('find-keywords-btn');
+    const keywordResults = document.getElementById('keyword-results');
+    const recommendedKeywords = document.getElementById('recommended-keywords');
+    const profileTextInput = document.getElementById('profile-text-input');
+    const highlightedText = document.getElementById('highlighted-text');
+    const jobTitleSelect = document.getElementById('job-title-select');
+    const generateHeadlineBtn = document.getElementById('generate-headline-btn');
+    const generatedHeadlines = document.getElementById('generated-headlines');
+    const headlineOptions = document.getElementById('headline-options');
+    const regenerateHeadlinesBtn = document.getElementById('regenerate-headlines-btn');
+    
     let soundEnabled = true;
     let speechRecognition;
     let botVoice = null;
@@ -45,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
             botVoice.pitch = 0.9;
             botVoice.volume = 1;
             
-            // Set a pleasant voice if available
             const voices = window.speechSynthesis.getVoices();
             const preferredVoices = voices.filter(v => v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Zira'));
             if (preferredVoices.length > 0) {
@@ -91,15 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
             
-            // Update active tab button
             tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-700', 'bg-indigo-50'));
             this.classList.add('active', 'text-indigo-700', 'bg-indigo-50');
             
-            // Update active tab content
             tabContents.forEach(content => content.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             
-            // Initialize chart if on score tab
             if (tabId === 'score') {
                 initProfileChart();
             }
@@ -159,13 +177,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Show loading state
         analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...';
         analyzeBtn.disabled = true;
         
-        // Simulate API call
         setTimeout(() => {
-            // Mock analysis data
             const analysis = {
                 strengths: ["Strong keyword optimization", "Complete experience section", "Good education background"],
                 weaknesses: ["Summary could be more compelling", "Need more recommendations", "Skills section needs updating"],
@@ -178,7 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 comparison: "Your profile scores higher than 65% of profiles in your industry"
             };
             
-            // Update UI with analysis results
             strengthsList.innerHTML = analysis.strengths.map(strength => `<li>${strength}</li>`).join('');
             weaknessesList.innerHTML = analysis.weaknesses.map(weakness => `<li>${weakness}</li>`).join('');
             suggestionsList.innerHTML = analysis.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('');
@@ -186,10 +200,8 @@ document.addEventListener('DOMContentLoaded', function() {
             scoreBar.style.width = `${analysis.score}%`;
             scoreComparison.textContent = analysis.comparison;
             
-            // Show results
             analysisResults.classList.remove('hidden');
             
-            // Reset button
             analyzeBtn.innerHTML = '<span>Analyze</span><i class="fas fa-magic ml-2"></i>';
             analyzeBtn.disabled = false;
         }, 2000);
@@ -292,7 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
-        // Speak the message if sound is enabled and it's not HTML
         if (soundEnabled && botVoice && !isHTML) {
             botVoice.text = message;
             window.speechSynthesis.speak(botVoice);
@@ -300,10 +311,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Show typing indicator
-    function showTypingIndicator() {
+    function showTypingIndicator(type = 'chat') {
+        const indicatorId = `typing-indicator-${type}`;
+        if (document.getElementById(indicatorId)) return;
+        
+        const container = type === 'chat' ? chatMessages : document.getElementById(`${type}-results`);
+        if (!container) return;
+        
         const typingDiv = document.createElement('div');
-        typingDiv.className = 'flex items-start';
-        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'flex items-start mb-3';
+        typingDiv.id = indicatorId;
         typingDiv.innerHTML = `
             <div class="w-8 h-8 rounded-full bot-avatar flex items-center justify-center mr-2">
                 <i class="fas fa-robot text-white"></i>
@@ -316,13 +333,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        container.appendChild(typingDiv);
+        container.scrollTop = container.scrollHeight;
     }
     
     // Hide typing indicator
-    function hideTypingIndicator() {
-        const typingIndicator = document.getElementById('typing-indicator');
+    function hideTypingIndicator(type = 'chat') {
+        const indicatorId = `typing-indicator-${type}`;
+        const typingIndicator = document.getElementById(indicatorId);
         if (typingIndicator) {
             typingIndicator.remove();
         }
@@ -365,7 +384,6 @@ document.addEventListener('DOMContentLoaded', function() {
             showTypingIndicator();
             
             try {
-                // Special case for greeting to trigger voice introduction
                 if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
                     setTimeout(() => {
                         hideTypingIndicator();
@@ -380,7 +398,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Send message to backend
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {
@@ -436,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Emoji button functionality (placeholder)
+    // Emoji button functionality
     emojiBtn.addEventListener('click', function() {
         addSystemMessage("Emoji picker coming soon!");
     });
@@ -455,4 +472,199 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         document.querySelector('header').classList.remove('pulse');
     }, 3000);
+
+    // Real-time summary suggestions
+    function setupSummaryOptimizer() {
+        let debounceTimer;
+        const DEBOUNCE_DELAY = 1000;
+        
+        summaryInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            
+            if (summaryInput.value.trim().length > 50) {
+                debounceTimer = setTimeout(() => {
+                    showTypingIndicator('summary');
+                    analyzeSummary(summaryInput.value);
+                }, DEBOUNCE_DELAY);
+            } else {
+                summarySuggestions.classList.add('hidden');
+            }
+        });
+        
+        async function analyzeSummary(text) {
+            try {
+                const response = await fetch('/analyze-summary', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text }),
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator('summary');
+                
+                if (data.suggestions) {
+                    summaryFeedback.innerHTML = data.suggestions.map(s => `<p class="mt-1">• ${s}</p>`).join('');
+                    summarySuggestions.classList.remove('hidden');
+                }
+            } catch (error) {
+                hideTypingIndicator('summary');
+                console.error('Error analyzing summary:', error);
+            }
+        }
+    }
+
+    // Headline analyzer
+    function setupHeadlineAnalyzer() {
+        analyzeHeadlineBtn.addEventListener('click', async () => {
+            const headline = headlineInput.value.trim();
+            if (!headline) return;
+            
+            showTypingIndicator('headline');
+            
+            try {
+                const response = await fetch('/analyze-headline', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ headline }),
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator('headline');
+                
+                if (data.score) {
+                    headlineScore.textContent = data.score;
+                    headlineScoreBar.style.width = `${data.score}%`;
+                    
+                    headlineTips.innerHTML = data.tips.map(tip => `<div class="flex items-start">
+                        <i class="fas ${tip.important ? 'fa-exclamation-circle text-red-500' : 'fa-info-circle text-blue-500'} mt-1 mr-2"></i>
+                        <p>${tip.text}</p>
+                    </div>`).join('');
+                    
+                    headlineResults.classList.remove('hidden');
+                }
+            } catch (error) {
+                hideTypingIndicator('headline');
+                console.error('Error analyzing headline:', error);
+            }
+        });
+    }
+
+    // Keyword highlighter
+    function setupKeywordHighlighter() {
+        findKeywordsBtn.addEventListener('click', async () => {
+            const role = targetRoleInput.value.trim();
+            if (!role) return;
+            
+            showTypingIndicator('keywords');
+            
+            try {
+                const response = await fetch('/get-keywords', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ role }),
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator('keywords');
+                
+                if (data.keywords) {
+                    recommendedKeywords.innerHTML = data.keywords.map(kw => 
+                        `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">${kw}</span>`
+                    ).join('');
+                    
+                    keywordResults.classList.remove('hidden');
+                    
+                    // Setup text highlighting
+                    profileTextInput.addEventListener('input', () => {
+                        highlightKeywords(profileTextInput.value, data.keywords);
+                    });
+                }
+            } catch (error) {
+                hideTypingIndicator('keywords');
+                console.error('Error finding keywords:', error);
+            }
+        });
+        
+        function highlightKeywords(text, keywords) {
+            if (!text) {
+                highlightedText.classList.add('hidden');
+                return;
+            }
+            
+            const pattern = new RegExp(`(${keywords.join('|')})`, 'gi');
+            
+            const highlighted = text.replace(pattern, match => 
+                `<span class="bg-yellow-200 font-medium">${match}</span>`
+            );
+            
+            highlightedText.innerHTML = highlighted;
+            highlightedText.classList.remove('hidden');
+        }
+    }
+
+    // Headline generator
+    function setupHeadlineGenerator() {
+        generateHeadlineBtn.addEventListener('click', generateHeadlines);
+        regenerateHeadlinesBtn.addEventListener('click', generateHeadlines);
+        
+        async function generateHeadlines() {
+            const jobTitle = jobTitleSelect.value;
+            if (!jobTitle) return;
+            
+            showTypingIndicator('headline-gen');
+            
+            try {
+                const response = await fetch('/generate-headlines', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ jobTitle }),
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator('headline-gen');
+                
+                if (data.headlines) {
+                    headlineOptions.innerHTML = data.headlines.map((hl, i) => `
+                        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 flex justify-between items-center">
+                            <p>${hl}</p>
+                            <button class="copy-headline-btn text-indigo-600 hover:text-indigo-800" data-headline="${hl}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    generatedHeadlines.classList.remove('hidden');
+                    
+                    // Add copy functionality
+                    document.querySelectorAll('.copy-headline-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const headline = btn.getAttribute('data-headline');
+                            navigator.clipboard.writeText(headline);
+                            btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
+                            setTimeout(() => {
+                                btn.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 2000);
+                        });
+                    });
+                }
+            } catch (error) {
+                hideTypingIndicator('headline-gen');
+                console.error('Error generating headlines:', error);
+            }
+        }
+    }
+
+    // Initialize all the new features
+    setupSummaryOptimizer();
+    setupHeadlineAnalyzer();
+    setupKeywordHighlighter();
+    setupHeadlineGenerator();
 });
