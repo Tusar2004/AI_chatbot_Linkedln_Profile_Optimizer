@@ -18,17 +18,7 @@
 | **Keyword Spotlight** | Highlight missing keywords for target roles | ![Keywords](https://via.placeholder.com/300x150?text=Keyword+Finder) |
 | **Headline Generator** | AI-crafted headlines tailored to your profession | ![Generator](https://via.placeholder.com/300x150?text=Headline+Options) |
 
-### 📊 Profile Intelligence
-```mermaid
-pie
-    title Profile Score Breakdown
-    "Headline" : 15
-    "Summary" : 20
-    "Experience" : 25
-    "Education" : 15
-    "Skills" : 10
-    "Other" : 15
-🚀
+
 ```
 🛠️ Technology Stack
 <div align="center"> <img src="https://img.shields.io/badge/Python-FFD43B?logo=python&logoColor=blue" alt="Python"> <img src="https://img.shields.io/badge/Flask-000000?logo=flask" alt="Flask"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript"> <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS"> <img src="https://img.shields.io/badge/Chart.js-FF6384?logo=chart.js&logoColor=white" alt="Chart.js"> </div>
