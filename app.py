@@ -145,6 +145,10 @@ knowledge_base = {
     }
 }
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -153,47 +157,29 @@ def chat():
         response = ""
         html = False
 
-        # Simulate processing time
         time.sleep(random.uniform(0.5, 1.5))
 
-        # Handle greetings
         if any(word in user_message for word in ["hello", "hi", "hey"]):
             response = "Hello! I'm Linky, your LinkedIn optimization assistant. How can I help you today?"
-        
-        # Handle API questions
         elif "api" in user_message:
             html = True
             response = generate_api_response()
-        
-        # Handle keyword requests
         elif "keyword" in user_message or "skills" in user_message:
             html = True
             response = generate_keyword_response(user_message)
-        
-        # Handle profile score requests
         elif "score" in user_message or "complete" in user_message or "strength" in user_message:
             html = True
             response = generate_profile_score_response()
-        
-        # Handle content ideas
         elif "content" in user_message or "post" in user_message or "article" in user_message:
             html = True
             response = generate_content_ideas(user_message)
-        
-        # Handle connection tips
         elif "connect" in user_message or "network" in user_message or "connection" in user_message:
             html = True
             response = generate_connection_tips()
-        
-        # Handle job search questions
         elif "job" in user_message or "hunt" in user_message or "recruiter" in user_message:
             response = generate_job_search_advice()
-        
-        # Handle profile optimization questions
         elif "optimize" in user_message or "improve" in user_message or "stand out" in user_message:
             response = generate_optimization_tips(user_message)
-        
-        # Handle help request
         elif "help" in user_message:
             response = """I can help with:
 - Profile optimization tips
@@ -206,8 +192,6 @@ def chat():
 - Networking advice
 
 What would you like help with specifically?"""
-        
-        # Default response for unrecognized queries
         else:
             response = handle_general_questions(user_message)
 
@@ -215,12 +199,10 @@ What would you like help with specifically?"""
     else:
         return jsonify({"response": "Sorry, I couldn't understand that.", "html": False}), 400
 
-# New endpoint for AI analysis
 @app.route('/ai-analysis', methods=['POST'])
 def ai_analysis():
     data = request.get_json()
     if data and 'profile_data' in data:
-        # Simulate AI analysis
         analysis = {
             "strengths": ["Strong keyword optimization", "Complete experience section", "Good education background"],
             "weaknesses": ["Summary could be more compelling", "Need more recommendations", "Skills section needs updating"],
@@ -235,25 +217,21 @@ def ai_analysis():
         return jsonify(analysis)
     return jsonify({"error": "Invalid data"}), 400
 
-# New endpoint for profile score visualization
 @app.route('/profile-score-visualization')
 def profile_score_visualization():
-    # Create a DataFrame for visualization
     sections = list(knowledge_base["profile_sections"]["score_weights"].keys())
     weights = list(knowledge_base["profile_sections"]["score_weights"].values())
     
     df = pd.DataFrame({
         'Section': sections,
         'Weight': weights,
-        'Completed': [True, True, False, True, True, False, False, False]  # Sample data
+        'Completed': [True, True, False, True, True, False, False, False]
     })
     
-    # Convert to Excel
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, sheet_name='Profile Score', index=False)
         
-        # Add chart
         workbook = writer.book
         worksheet = writer.sheets['Profile Score']
         chart = workbook.add_chart({'type': 'bar'})
@@ -274,25 +252,20 @@ def profile_score_visualization():
         download_name='linkedin_profile_score.xlsx'
     )
 
-# New endpoint for PDF export
 @app.route('/export-profile-pdf')
 def export_profile_pdf():
-    # Create PDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     
-    # Add title
     pdf.cell(200, 10, txt="LinkedIn Profile Optimization Report", ln=1, align='C')
     pdf.ln(10)
     
-    # Add sections
     pdf.set_font("Arial", 'B', 14)
     pdf.cell(200, 10, txt="Profile Analysis", ln=1)
     pdf.set_font("Arial", size=12)
     pdf.multi_cell(0, 10, txt="Your profile has been analyzed by our AI system. Here are the key findings and recommendations to improve your LinkedIn presence.")
     
-    # Add analysis
     pdf.ln(5)
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(200, 10, txt="Strengths:", ln=1)
@@ -305,7 +278,6 @@ def export_profile_pdf():
     pdf.set_font("Arial", size=12)
     pdf.multi_cell(0, 10, txt="- Summary could be more compelling\n- Need more recommendations\n- Skills section needs updating")
     
-    # Create a BytesIO buffer and save the PDF to it
     buffer = io.BytesIO()
     pdf_bytes = pdf.output(dest='S').encode('latin1')
     buffer.write(pdf_bytes)
@@ -318,7 +290,130 @@ def export_profile_pdf():
         download_name='linkedin_optimization_report.pdf'
     )
 
-# Helper functions
+@app.route('/analyze-summary', methods=['POST'])
+def analyze_summary():
+    data = request.get_json()
+    if not data or 'text' not in data:
+        return jsonify({"error": "Invalid data"}), 400
+    
+    text = data['text']
+    suggestions = []
+    
+    if len(text) < 150:
+        suggestions.append("Consider expanding your summary to at least 150 characters for better visibility")
+    elif len(text) > 2000:
+        suggestions.append("Your summary is quite long. Consider keeping it under 2000 characters for readability")
+    
+    if not any(char.isdigit() for char in text):
+        suggestions.append("Try including quantifiable achievements (e.g., 'Increased sales by 30%')")
+    
+    if "I " not in text and "my " not in text:
+        suggestions.append("Using first-person pronouns (I, my) can make your summary more personal")
+    
+    action_verbs = ["led", "managed", "created", "developed", "increased", "improved"]
+    if not any(verb in text.lower() for verb in action_verbs):
+        suggestions.append("Use more action verbs to describe your achievements (e.g., led, created, improved)")
+    
+    if not suggestions:
+        suggestions.append("Your summary looks good! Consider adding a call-to-action (e.g., 'Let's connect!')")
+    
+    return jsonify({"suggestions": suggestions})
+
+@app.route('/analyze-headline', methods=['POST'])
+def analyze_headline():
+    data = request.get_json()
+    if not data or 'headline' not in data:
+        return jsonify({"error": "Invalid data"}), 400
+    
+    headline = data['headline']
+    score = random.randint(50, 90)
+    
+    tips = []
+    
+    if len(headline) < 30:
+        tips.append({
+            "text": "Your headline is too short. Aim for 30-120 characters.",
+            "important": True
+        })
+    elif len(headline) > 120:
+        tips.append({
+            "text": "Your headline is too long. Keep it under 120 characters.",
+            "important": True
+        })
+    
+    if " at " not in headline and " | " not in headline:
+        tips.append({
+            "text": "Consider using '|' or 'at' to separate job title from value proposition.",
+            "important": False
+        })
+    
+    if len(headline.split()) < 4:
+        tips.append({
+            "text": "Add more keywords to help your profile appear in searches.",
+            "important": True
+        })
+    
+    value_words = ["help", "create", "build", "transform", "specialize", "expert"]
+    if not any(word in headline.lower() for word in value_words):
+        tips.append({
+            "text": "Include what value you provide (e.g., 'helping businesses grow').",
+            "important": False
+        })
+    
+    return jsonify({
+        "score": score,
+        "tips": tips
+    })
+
+@app.route('/get-keywords', methods=['POST'])
+def get_keywords():
+    data = request.get_json()
+    if not data or 'role' not in data:
+        return jsonify({"error": "Invalid data"}), 400
+    
+    role = data['role'].lower()
+    industry = None
+    
+    for ind, data in knowledge_base["keywords"].items():
+        if any(word in role for word in ind.split()):
+            industry = ind
+            break
+    
+    if not industry:
+        industry = random.choice(list(knowledge_base["keywords"].keys()))
+    
+    keywords = knowledge_base["keywords"][industry]["keywords"]
+    
+    role_keywords = []
+    if "engineer" in role:
+        role_keywords = ["Systems Design", "Code Review", "Technical Leadership"]
+    elif "manager" in role:
+        role_keywords = ["Team Leadership", "Stakeholder Management", "Strategic Planning"]
+    elif "analyst" in role:
+        role_keywords = ["Data Visualization", "Business Intelligence", "Reporting"]
+    
+    keywords = list(set(keywords + role_keywords))[:15]
+    
+    return jsonify({"keywords": keywords})
+
+@app.route('/generate-headlines', methods=['POST'])
+def generate_headlines():
+    data = request.get_json()
+    if not data or 'jobTitle' not in data:
+        return jsonify({"error": "Invalid data"}), 400
+    
+    job_title = data['jobTitle']
+    
+    headlines = [
+        f"{job_title} | Specializing in innovative solutions | Helping businesses grow",
+        f"Experienced {job_title} | Transforming ideas into reality | Passionate about excellence",
+        f"{job_title} | Technical Expert | Problem Solver | Team Player",
+        f"Senior {job_title} | Driving digital transformation | Focused on measurable results",
+        f"{job_title} | Creating value through technology | Let's connect!"
+    ]
+    
+    return jsonify({"headlines": headlines})
+
 def generate_api_response():
     response = """
         <p class="font-medium text-indigo-700">LinkedIn API Integration Guide</p>
@@ -428,13 +523,11 @@ def generate_optimization_tips(user_message):
         ])
 
 def handle_general_questions(user_message):
-    # Check if question matches any general question categories
     for category, questions in knowledge_base["general_questions"].items():
         for q in questions:
             if q.lower() in user_message:
                 return f"For '{q}', here's my advice: {generate_optimization_tips(q)}"
     
-    # Default response if no match found
     return "I can help with LinkedIn profile optimization, keyword suggestions, API integration, profile analysis, content ideas, and networking strategies. Could you please be more specific about what you need help with?"
 
 def detect_industry_from_message(message):
@@ -450,10 +543,6 @@ def detect_industry_from_message(message):
         return "product management"
     else:
         return random.choice(["software engineering", "digital marketing", "finance", "data science", "product management"])
-
-@app.route('/')
-def home():
-    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
