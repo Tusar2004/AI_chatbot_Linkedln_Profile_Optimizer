@@ -30,7 +30,9 @@ linkedin-optimizer-pro/
 │   ├── script.js         # All interactive functionality
 │   └── styles.css        # Custom styles
 ├── templates/
-│   └── index.html        # Single-page application
+│   └── index.html
+        login.html
+        signup.html        # Single-page application
 ├── app.py                # Flask backend
 ├── knowledge_base.py     # AI optimization rules
 ├── requirements.txt      # Dependencies
