@@ -6,13 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const voiceBtn = document.getElementById('voice-btn');
     const soundBtn = document.getElementById('sound-btn');
     const emojiBtn = document.getElementById('emoji-btn');
-    const instructionsToggle = document.getElementById('instructions-toggle');
-    const instructionsContent = document.getElementById('instructions-content');
-    const instructionsIcon = document.getElementById('instructions-icon');
-    
-    // Tab elements
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
     
     // AI Analysis elements
     const analyzeBtn = document.getElementById('analyze-btn');
@@ -33,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // PDF Export elements
     const generatePdfBtn = document.getElementById('generate-pdf-btn');
     
-    // New elements for optimization tools
+    // Optimization tools elements
     const summaryInput = document.getElementById('summary-input');
     const summarySuggestions = document.getElementById('summary-suggestions');
     const summaryFeedback = document.getElementById('summary-feedback');
@@ -107,69 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Tab switching functionality
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-700', 'bg-indigo-50'));
-            this.classList.add('active', 'text-indigo-700', 'bg-indigo-50');
-            
-            tabContents.forEach(content => content.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            if (tabId === 'score') {
-                initProfileChart();
-            }
-        });
-    });
-    
-    // Initialize profile score chart
-    function initProfileChart() {
-        const ctx = document.getElementById('profileChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Headline', 'Summary', 'Experience', 'Education', 'Skills', 'Recommendations'],
-                datasets: [{
-                    label: 'Your Profile',
-                    data: [85, 65, 90, 75, 70, 40],
-                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                    borderColor: 'rgba(79, 70, 229, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-                    pointRadius: 4
-                }, {
-                    label: 'Industry Average',
-                    data: [70, 60, 80, 85, 65, 50],
-                    backgroundColor: 'rgba(192, 132, 252, 0.2)',
-                    borderColor: 'rgba(192, 132, 252, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(192, 132, 252, 1)',
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        angleLines: {
-                            display: true
-                        },
-                        suggestedMin: 0,
-                        suggestedMax: 100
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                }
-            }
-        });
-    }
-    
     // Handle AI analysis
-    analyzeBtn.addEventListener('click', function() {
+    analyzeBtn.addEventListener('click', async function() {
         const profileUrl = profileUrlInput.value.trim();
         
         if (!profileUrl) {
@@ -180,31 +112,54 @@ document.addEventListener('DOMContentLoaded', function() {
         analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...';
         analyzeBtn.disabled = true;
         
-        setTimeout(() => {
-            const analysis = {
-                strengths: ["Strong keyword optimization", "Complete experience section", "Good education background"],
-                weaknesses: ["Summary could be more compelling", "Need more recommendations", "Skills section needs updating"],
-                suggestions: [
-                    "Add 3-5 more technical skills",
-                    "Include metrics in your experience descriptions",
-                    "Write a more engaging summary with your unique value proposition"
-                ],
-                score: 78,
-                comparison: "Your profile scores higher than 65% of profiles in your industry"
-            };
+        try {
+            const response = await fetch('/ai-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ profile_data: profileUrl }),
+            });
             
-            strengthsList.innerHTML = analysis.strengths.map(strength => `<li>${strength}</li>`).join('');
-            weaknessesList.innerHTML = analysis.weaknesses.map(weakness => `<li>${weakness}</li>`).join('');
-            suggestionsList.innerHTML = analysis.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('');
-            profileScore.textContent = analysis.score;
-            scoreBar.style.width = `${analysis.score}%`;
-            scoreComparison.textContent = analysis.comparison;
+            const data = await response.json();
             
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Update industry card
+            document.getElementById('industry-name').textContent = data.industry || 'your industry';
+            if (data.profile_image) {
+                document.getElementById('industry-icon').src = data.profile_image;
+            }
+            
+            // Update strengths, weaknesses, and suggestions
+            strengthsList.innerHTML = data.strengths.map(strength => `<li>${strength}</li>`).join('');
+            weaknessesList.innerHTML = data.weaknesses.map(weakness => `<li>${weakness}</li>`).join('');
+            suggestionsList.innerHTML = data.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('');
+            
+            // Update score
+            profileScore.textContent = data.score;
+            scoreBar.style.width = `${data.score}%`;
+            scoreComparison.textContent = data.comparison;
+            
+            // Show results
             analysisResults.classList.remove('hidden');
             
+            // Add animation to cards
+            document.querySelectorAll('.profile-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('animate__animated', 'animate__fadeInUp');
+                }, index * 100);
+            });
+            
+        } catch (error) {
+            alert('Error analyzing profile: ' + error.message);
+            console.error('Error:', error);
+        } finally {
             analyzeBtn.innerHTML = '<span>Analyze</span><i class="fas fa-magic ml-2"></i>';
             analyzeBtn.disabled = false;
-        }, 2000);
+        }
     });
     
     // Handle Excel download
@@ -232,19 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // View chat button
     viewChatBtn.addEventListener('click', function() {
-        tabButtons.forEach(btn => btn.classList.remove('active', 'text-indigo-700', 'bg-indigo-50'));
-        document.querySelector('[data-tab="chat"]').classList.add('active', 'text-indigo-700', 'bg-indigo-50');
-        
-        tabContents.forEach(content => content.classList.remove('active'));
-        document.getElementById('chat').classList.add('active');
-        
+        document.querySelector('[data-tab="chat"]').click();
         userInput.focus();
-    });
-    
-    // Toggle instructions panel
-    instructionsToggle.addEventListener('click', function() {
-        instructionsContent.classList.toggle('hidden');
-        instructionsIcon.classList.toggle('rotate-180');
     });
     
     // Add system message to chat
@@ -468,11 +412,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initVoice();
     initSpeechRecognition();
     
-    // Welcome animation
-    setTimeout(() => {
-        document.querySelector('header').classList.remove('pulse');
-    }, 3000);
-
     // Real-time summary suggestions
     function setupSummaryOptimizer() {
         let debounceTimer;
