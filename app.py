@@ -9,7 +9,7 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-1234'  # Change this in production
+app.secret_key = 'your-secret-key-1234'  
 
 # Mock database (replace with real database in production)
 users_db = {
@@ -741,3 +741,4 @@ def generate_headlines():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
