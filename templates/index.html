@@ -778,7 +778,7 @@
         </footer>
     </div>
 
-    <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
         // User menu toggle
         const userMenuButton = document.getElementById('user-menu-button');
