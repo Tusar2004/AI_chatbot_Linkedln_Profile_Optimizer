@@ -1,5 +1,6 @@
-Flask==2.3.2
-gunicorn==21.2.0
-pandas==2.0.3
-fpdf==1.7.2
-Werkzeug==2.3.6
+Flask
+gunicorn
+fpdf
+pandas==1.5.3
+numpy==1.23.5
+xlsxwriter
