@@ -93,6 +93,27 @@
         .nav-shadow {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
+        .headline-score-bar {
+            width: 0%;
+        }
+        .score-bar {
+            width: 0%;
+        }
+        .progress-bar-85 {
+            width: 85%;
+        }
+        .progress-bar-65 {
+            width: 65%;
+        }
+        .progress-bar-90 {
+            width: 90%;
+        }
+        .progress-bar-75 {
+            width: 75%;
+        }
+        .progress-bar-70 {
+            width: 70%;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -249,10 +270,10 @@
                             <p class="text-xs text-indigo-200">Active now • Listening for your questions</p>
                         </div>
                         <div class="ml-auto flex space-x-3">
-                            <button id="voice-btn" class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <button id="voice-btn" title="Voice Input" aria-label="Voice Input" class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
                                 <i class="fas fa-microphone text-white"></i>
                             </button>
-                            <button id="sound-btn" class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <button id="sound-btn" title="Toggle Sound" aria-label="Toggle Sound" class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
                                 <i class="fas fa-volume-up text-white"></i>
                             </button>
                         </div>
@@ -290,7 +311,7 @@
                                     class="w-full px-4 py-2 pr-10 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                     autocomplete="off"
                                 >
-                                <button type="button" id="emoji-btn" class="absolute right-10 top-2 text-gray-400 hover:text-indigo-600">
+                                <button type="button" id="emoji-btn" title="Emoji Picker" aria-label="Emoji Picker" class="absolute right-10 top-2 text-gray-400 hover:text-indigo-600">
                                     <i class="far fa-smile"></i>
                                 </button>
                             </div>
@@ -377,7 +398,7 @@
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                                    <div id="headline-score-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                    <div id="headline-score-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full headline-score-bar"></div>
                                 </div>
                                 <div id="headline-tips" class="text-sm text-gray-700 space-y-2"></div>
                             </div>
@@ -392,6 +413,7 @@
                                     id="target-role-input" 
                                     class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
                                     placeholder="Enter your target job title (e.g. 'Digital Marketing Manager')"
+                                    aria-label="Target job title"
                                 >
                                 <button 
                                     id="find-keywords-btn"
@@ -422,6 +444,8 @@
                             <div class="flex space-x-2">
                                 <select 
                                     id="job-title-select" 
+                                    title="Select job title"
+                                    aria-label="Target job title selection"
                                     class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 >
                                     <option value="">Select your target job title</option>
@@ -544,7 +568,7 @@
                                             </div>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                                            <div id="score-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                            <div id="score-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full score-bar"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -591,7 +615,7 @@
                                         <span class="text-sm font-medium text-gray-700">Headline</span>
                                         <div class="flex items-center">
                                             <div class="w-32 bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 85%"></div>
+                                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar-85"></div>
                                             </div>
                                             <span class="text-xs font-medium text-gray-500">85%</span>
                                         </div>
@@ -600,7 +624,7 @@
                                         <span class="text-sm font-medium text-gray-700">Summary</span>
                                         <div class="flex items-center">
                                             <div class="w-32 bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 65%"></div>
+                                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar-65"></div>
                                             </div>
                                             <span class="text-xs font-medium text-gray-500">65%</span>
                                         </div>
@@ -609,7 +633,7 @@
                                         <span class="text-sm font-medium text-gray-700">Experience</span>
                                         <div class="flex items-center">
                                             <div class="w-32 bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 90%"></div>
+                                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar-90"></div>
                                             </div>
                                             <span class="text-xs font-medium text-gray-500">90%</span>
                                         </div>
@@ -618,7 +642,7 @@
                                         <span class="text-sm font-medium text-gray-700">Education</span>
                                         <div class="flex items-center">
                                             <div class="w-32 bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 75%"></div>
+                                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar-75"></div>
                                             </div>
                                             <span class="text-xs font-medium text-gray-500">75%</span>
                                         </div>
@@ -627,7 +651,7 @@
                                         <span class="text-sm font-medium text-gray-700">Skills</span>
                                         <div class="flex items-center">
                                             <div class="w-32 bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 70%"></div>
+                                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar-70"></div>
                                             </div>
                                             <span class="text-xs font-medium text-gray-500">70%</span>
                                         </div>
